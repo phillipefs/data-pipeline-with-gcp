@@ -3,7 +3,7 @@ name: 'Terraform CI'
 on:
   push:
     branches:
-    - main
+    - master
     paths:
       - '**.tf'
   pull_request:
