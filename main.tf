@@ -1,4 +1,5 @@
-resource "google_storage_bucket" "gcs_bucket" {
-    name = "test-bucket-random-01893"
-
+resource "google_storage_bucket" "my_bucket" {
+  name          = "my-unique-bucket-name"
+  location      = "US"
+  force_destroy = true
 }
