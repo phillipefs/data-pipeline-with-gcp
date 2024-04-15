@@ -2,8 +2,10 @@ from fastapi import FastAPI, HTTPException
 import requests
 from google.cloud import storage
 from pydantic import BaseModel
+import uvicorn
 
 app = FastAPI()
+
 
 class Params(BaseModel):
     url: str
@@ -11,23 +13,43 @@ class Params(BaseModel):
     output_file_prefix: str
 
 
+def put_file_to_gcs(output_file: str, bucket_name: str, content):
+    try:
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(bucket_name)
+        blob = bucket.blob(output_file)
+        blob.upload_from_string(content)
+
+        return 'OK'
+    except Exception as ex:
+        print(ex)
+
+
 @app.get('/')
 async def read_root():
-    return {"Hello":"World"}
+    return {"Hello": "World"}
 
-def get_data(remote_url):
+
+def get_dados(remote_url):
     response = requests.get(remote_url)
+
     return response
 
-async def download_data_fuel(params: Params):
+
+@app.post("/download_combustivel")
+async def download_combustivel(params: Params):
     try:
-        data = get_data(params.url)
 
-        return {
-            "Status":"Ok",
-            "Bucket_name":params.bucket_name,
-            "url":params.url
-        }
+        data = get_dados(params.url)
 
-    except Exception as e:
-        raise HTTPException(status_code=e.code, detail = f"{e}")
+        put_file_to_gcs(bucket_name=params.bucket_name,
+                        output_file=params.output_file_prefix,
+                        content=data.content)
+
+        return {"Status": "OK", "Bucket_name": params.bucket_name, "url": params.url}
+    except Exception as ex:
+        raise HTTPException(status_code=ex.code, detail=f"{ex}")
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8080)
