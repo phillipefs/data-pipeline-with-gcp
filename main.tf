@@ -101,6 +101,12 @@ resource "google_dataproc_cluster" "sample_cluster" {
     worker_config {
       num_instances = 2
       machine_type  = "n1-standard-2"
+
+      disk_config {
+      boot_disk_type    = "pd-ssd"
+      boot_disk_size_gb = 50
+      num_local_ssds    = 1
+      }
     }
 
     software_config {
