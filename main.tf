@@ -75,3 +75,34 @@ module "bucket-pyspark-code" {
   project_id = var.project_id
   location   = var.region
 }
+
+resource "google_dataproc_cluster" "sample_cluster" {
+  name    = "sample-cluster"
+  region  = var.region
+  project = var.project_id
+
+  cluster_config {
+    master_config {
+      num_instances = 1
+      machine_type  = "n1-standard-1"
+    }
+
+    worker_config {
+      num_instances = 2
+      machine_type  = "n1-standard-1"
+    }
+
+    endpoint_config {
+                  enable_http_port_access = "true"
+            }
+    software_config {
+      # You can specify a list of optional components to be installed on the cluster.
+      optional_components   = ["ANACONDA", "JUPYTER"]
+      override_properties = {
+          "spark:spark.executor.memory" = "2688m"
+          "spark:spark.executor.cores" = "1"
+          "spark:spark.logConf" = "true"
+      }
+    }
+  }
+}
