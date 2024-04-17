@@ -83,9 +83,15 @@ resource "google_dataproc_cluster" "sample_cluster" {
 
   cluster_config {
 
+    staging_bucket = "data-pipeline-combustiveis-br-pyspark-tmp"
+
     gce_cluster_config {
           zone = "us-central1-c"
         }
+
+    endpoint_config {
+      enable_http_port_access = true
+    }
       
     master_config {
       num_instances = 1
