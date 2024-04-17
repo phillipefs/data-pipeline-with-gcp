@@ -77,15 +77,23 @@ module "bucket-pyspark-code" {
 }
 
 resource "google_dataproc_cluster" "sample_cluster" {
+  provider = "google-beta"
   name    = "dataproc-cluster-lab"
   region  = var.region
   project = var.project_id
+  graceful_decommission_timeout = "120s"
 
   cluster_config {
+
+    staging_bucket = "data-pipeline-combustiveis-br-pyspark-tmp"
 
     gce_cluster_config {
           zone = "us-central1-c"
         }
+
+    endpoint_config {
+      enable_http_port_access = true
+    }
       
     master_config {
       num_instances = 1
