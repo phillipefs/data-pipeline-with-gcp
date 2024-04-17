@@ -77,9 +77,11 @@ module "bucket-pyspark-code" {
 }
 
 resource "google_dataproc_cluster" "sample_cluster" {
+  provider = "google-beta"
   name    = "dataproc-cluster-lab"
   region  = var.region
   project = var.project_id
+  graceful_decommission_timeout = "120s"
 
   cluster_config {
 
