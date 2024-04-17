@@ -92,9 +92,6 @@ resource "google_dataproc_cluster" "sample_cluster" {
       machine_type  = "n1-standard-1"
     }
 
-    endpoint_config {
-                  enable_http_port_access = "true"
-            }
     software_config {
       # You can specify a list of optional components to be installed on the cluster.
       optional_components   = ["ANACONDA", "JUPYTER"]
