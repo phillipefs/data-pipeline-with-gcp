@@ -77,7 +77,7 @@ module "bucket-pyspark-code" {
 }
 
 resource "google_dataproc_cluster" "sample_cluster" {
-  name    = "sample-cluster"
+  name    = "dataproc-cluster-lab"
   region  = var.region
   project = var.project_id
 
@@ -94,7 +94,7 @@ resource "google_dataproc_cluster" "sample_cluster" {
 
     software_config {
       # You can specify a list of optional components to be installed on the cluster.
-      optional_components   = ["ANACONDA", "JUPYTER"]
+      optional_components   = ["JUPYTER"]
       override_properties = {
           "spark:spark.executor.memory" = "2688m"
           "spark:spark.executor.cores" = "1"
