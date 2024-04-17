@@ -82,6 +82,11 @@ resource "google_dataproc_cluster" "sample_cluster" {
   project = var.project_id
 
   cluster_config {
+
+    gce_cluster_config {
+          zone = "us-central1-c"
+        }
+      
     master_config {
       num_instances = 1
       machine_type  = "n1-standard-2"
