@@ -77,7 +77,7 @@ module "bucket-pyspark-code" {
 }
 
 resource "google_dataproc_cluster" "sample_cluster" {
-  name    = "dataproc_cluster"
+  name    = "dataproc-cluster-lab"
   region  = var.region
   project = var.project_id
 
