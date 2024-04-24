@@ -58,7 +58,6 @@ def add_semestre(dataframe, coluna):
 
     return dataframe
 
-
 def add_filename_input(dataframe):
     """
     Parametros: dataframe
