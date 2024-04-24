@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Authenticate on GCS
-        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@0.2.1
         with:
           version: '270.0.0'
           service_account_key: ${{ secrets.GOOGLE_CREDENTIALS }}
@@ -32,4 +32,3 @@ jobs:
 
       - name: Deploy
         run: gsutil cp etl-spark/main.py gs://data-pipeline-combustiveis-br-pyspark-code/
-        
