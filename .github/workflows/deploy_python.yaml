@@ -21,24 +21,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Setup Python
-        uses: actions/setup-python@v2
+      - name: Authenticate on GCS
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
-          python-version: '3.x' # ou a versão que você precisa
+          version: '270.0.0'
+          service_account_key: ${{ secrets.GOOGLE_CREDENTIALS }}
 
-      - name: Install Google Cloud SDK
-        run: |
-          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-          sudo apt-get install apt-transport-https ca-certificates gnupg
-          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-          sudo apt-get update && sudo apt-get install google-cloud-sdk
+      - name: Build
+        run: yarn build
 
-      - name: Set up Google Cloud SDK
-        run: gcloud auth configure-docker
-
-      - name: Copy file to GCP bucket
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/temp_credentials.json
-        run: |
-          echo "${{ secrets.GOOGLE_CREDENTIALS }}" > temp_credentials.json
-          gsutil cp etl-spark/main.py gs://data-pipeline-combustiveis-br-pyspark-code/
+      - name: Deploy
+        run: gsutil cp etl-spark/main.py gs://data-pipeline-combustiveis-br-pyspark-code/
