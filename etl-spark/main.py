@@ -30,7 +30,6 @@ def rename_columns(dataframe):
 
     return dataframe
 
-
 def add_year(dataframe, coluna):
     """
     Parametros: dataframe, coluna
