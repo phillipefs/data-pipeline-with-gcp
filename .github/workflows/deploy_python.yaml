@@ -32,3 +32,4 @@ jobs:
 
       - name: Deploy
         run: gsutil cp etl-spark/main.py gs://data-pipeline-combustiveis-br-pyspark-code/
+        
