@@ -196,5 +196,5 @@ if __name__ == '__main__':
          file_format=known_args.file_format,
          bq_dataset=known_args.bq_dataset,
          bq_table=known_args.table_bq,
-         gcs_tmp_bucket="data-pipeline-stack-combustiveis-brasil-pyspark-code"
+         gcs_tmp_bucket="data-pipeline-combustiveis-br-pyspark-code"
          )
