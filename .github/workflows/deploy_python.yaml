@@ -1,0 +1,19 @@
+deploy_python:
+  name: 'Deploy Python File to GCP Bucket'
+  runs-on: ubuntu-latest
+
+  if: github.event_name == 'push' && contains(github.event.head_commit.modified, 'etl-spark/main.py')
+
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Configure Google Cloud SDK
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+      run: |
+        gcloud auth activate-service-account --key-file=${{ secrets.GOOGLE_CREDENTIALS }}
+
+    - name: Copy file to GCP bucket
+      run: |
+        gsutil cp etl-spark/main.py gs://data-pipeline-combustiveis-br-pyspark-code/
