@@ -45,7 +45,6 @@ def add_year(dataframe, coluna):
 
     return dataframe
 
-
 def add_semestre(dataframe, coluna):
     """
     Parametros: dataframe, coluna
