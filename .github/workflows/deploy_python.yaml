@@ -23,7 +23,7 @@ jobs:
 
       - name: Configure Google Cloud SDK
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
         run: |
           gcloud auth activate-service-account --key-file=${{ secrets.GOOGLE_CREDENTIALS }}
 
