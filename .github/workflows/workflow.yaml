@@ -39,6 +39,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v3
+        with:
+            fetch-depth: 0
+
+      - name: Base SHA
+        id: base-sha
+        run: echo "sha=$(git rev-parse origin/master)" >> $GITHUB_OUTPUT
+      
+      - name: Get Changed Directories
+        id: changed-directories
+        uses: tj-actions/changed-files@v35
+        with:
+            base_sha: "${{ steps.base-sha.outputs.sha }}"
+      
+      - name: List all changed files
+        run: |
+          for file in ${{ steps.changed-directories.outputs.all_changed_and_modified_files }}; do
+            echo $file
+          done
+          
       - name: Checkout
         uses: actions/checkout@v2
 
