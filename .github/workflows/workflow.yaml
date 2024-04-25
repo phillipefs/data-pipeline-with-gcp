@@ -1,17 +1,48 @@
-name: 'Terraform CI'
+name: 'WORKFLOW CI/CD'
 
 on:
   push:
     branches:
-    - master
+      - master
     paths:
       - '**.tf'
+      - 'etl-spark/main.py'
+
   pull_request:
     branches:
-    - master
+      - master
     paths:
       - '**.tf'
+
 jobs:
+
+  deploy_script:
+    name: 'Deploy Script'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.event_path == 'etl-spark/main.py'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Authorize GCP
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json:  ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: '>= 363.0.0'
+          project_id: 'datapipelines-419810'
+
+      - name: Configure Docker
+        run: |-
+          gcloud auth configure-docker
+
+      - name: Deploy
+        run: gsutil cp etl-spark/main.py gs://data-pipeline-combustiveis-br-pyspark-code/
+
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
