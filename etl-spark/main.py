@@ -5,7 +5,6 @@ from pyspark.sql.functions import regexp_replace, when, year, month, to_date, co
 from pyspark.sql.types import StringType, IntegerType, FloatType
 import re
 
-
 def start_or_create_spark():
     from pyspark.sql import SparkSession
     spark = (SparkSession
