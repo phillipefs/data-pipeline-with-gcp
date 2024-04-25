@@ -42,6 +42,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: List Modified Files
+        run: |
+          echo "Modified Files:"
+          echo "${{ github.event.head_commit.modified }}"
+
       - name: Authorize GCP
         uses: 'google-github-actions/auth@v2'
         with:
