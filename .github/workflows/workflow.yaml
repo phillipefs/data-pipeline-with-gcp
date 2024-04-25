@@ -63,7 +63,7 @@ jobs:
 
     - name: Print Event Path
       run: |
-          echo "Files Changed: ${{ github.event.inputs.files }}"
+          echo "Files Changed: ${{ github.event.head_commit.modified }}"
 
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
