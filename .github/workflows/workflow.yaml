@@ -16,9 +16,26 @@ on:
 
 jobs:
 
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      job_spark: ${{ steps.changes.outputs.job_spark }}
+      infra: ${{ steps.changes.outputs.infra }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: dorny/paths-filter@v2
+      id: changes
+      with:
+        filters: |
+          job_spark:
+            - 'etl-spark/main.py'
+          infra:
+            - '**.tf' 
+
   deploy_script:
+    needs: changes
     name: 'Deploy Script'
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && contains(github.event.inputs.files, 'etl-spark/main.py')
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && ${{ needs.changes.outputs.job_spark == 'true' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -44,6 +61,8 @@ jobs:
         run: gsutil cp etl-spark/main.py gs://data-pipeline-combustiveis-br-pyspark-code/
 
   terraform:
+    needs: changes
+    if: ${{ needs.changes.outputs.infra == 'true' }}
     name: 'Terraform'
     runs-on: ubuntu-latest
 
