@@ -18,7 +18,7 @@ jobs:
 
   deploy_script:
     name: 'Deploy Script'
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && github.event_path == 'etl-spark/main.py'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && contains(github.event.inputs.files, 'etl-spark/main.py')
     runs-on: ubuntu-latest
 
     steps:
@@ -63,7 +63,7 @@ jobs:
 
     - name: Print Event Path
       run: |
-          echo "Event Path: ${{ github.event_path }}"
+          echo "Files Changed: ${{ github.event.inputs.files }}"
 
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
