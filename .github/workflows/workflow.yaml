@@ -31,19 +31,16 @@ jobs:
           infra:
             - '**.tf' 
 
-  deploy_script:
+  deploy_spark_files:
     needs: changes
-    name: 'Deploy Script'
+    name: 'Deploy Spark Files'
     if: github.event_name == 'push' && github.ref == 'refs/heads/master' && ${{ needs.changes.outputs.job_spark == 'true' }}
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      # -----------------------------------------------------------------------------------------------------------
-      # Example 1
-      # -----------------------------------------------------------------------------------------------------------
-      - name: Get changed SPark Files
+      - name: Get changed Spark Files
         id: changed-spark-files
         # To compare changes between the current commit and the last pushed remote commit set `since_last_remote_commit: true`. e.g
         # with:
@@ -55,7 +52,7 @@ jobs:
           files: |
             etl-spark/**
 
-      - name: List all Spark Files
+      - name: Listing ALL changed Spark files
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-spark-files.outputs.all_changed_files }}
         run: |
@@ -91,13 +88,11 @@ jobs:
 
       - name: Deploy Spark Files
         env:
-          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+          ALL_CHANGED_FILES: ${{ steps.changed-spark-files.outputs.all_changed_files }}
         run: |
-          for file in ${ALL_CHANGED_FILES}; do
-            if echo "$file" | grep -q "^etl-spark/"; then
-              echo "Copying file $file ...."
-              gsutil cp $file gs://data-pipeline-combustiveis-br-pyspark-code/
-            fi
+          for file in ${ALL_CHANGED_FILES}; do          
+            echo "Copying file $file ...."
+            gsutil cp $file gs://data-pipeline-combustiveis-br-pyspark-code/
           done
 
       - name: Removing Old SPark Files
