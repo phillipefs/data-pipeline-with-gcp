@@ -71,9 +71,20 @@ jobs:
             echo "No files were deleted"
           fi
 
-      # - name: Checkout
-      #   uses: actions/checkout@v2
-
+      - name: Verify Changed SPARK FILES
+        uses: tj-actions/verify-changed-files@v19
+        id: verify-changed-files
+        with:
+          files: |
+             etl-spark
+             
+      - name: Run step only when any of the above files change.
+        if: steps.verify-changed-files.outputs.files_changed == 'true'
+        env:
+          CHANGED_FILES: ${{ steps.verify-changed-files.outputs.changed_files }}
+        run: |
+          echo "Changed files: $CHANGED_FILES"
+          
       - name: Authorize GCP
         uses: 'google-github-actions/auth@v2'
         with:
