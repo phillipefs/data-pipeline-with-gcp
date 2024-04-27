@@ -15,6 +15,7 @@ def start_or_create_spark():
              )
     return spark
 
+
 def rename_columns(dataframe):
     """
     Escreva uma função que receba o Dataframe Spark e realize o rename de colunas acordo
