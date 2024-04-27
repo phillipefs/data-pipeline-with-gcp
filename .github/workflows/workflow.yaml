@@ -89,17 +89,29 @@ jobs:
         run: |-
           gcloud auth configure-docker
 
-      - name: Deploy
+      - name: Deploy Spark Files
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
           for file in ${ALL_CHANGED_FILES}; do
-            echo "Copying file $file ...."
-            gsutil cp $file gs://data-pipeline-combustiveis-br-pyspark-code/
+            if echo "$file" | grep -q "^etl-spark/"; then
+              echo "Copying file $file ...."
+              gsutil cp $file gs://data-pipeline-combustiveis-br-pyspark-code/
+            fi
           done
 
-      # - name: Deploy
-      #   run: gsutil cp etl-spark/main.py gs://data-pipeline-combustiveis-br-pyspark-code/        
+      - name: Removing Old SPark Files
+        run: |
+          deleted_files=$(git diff --diff-filter=D --name-only ${{ github.event.before }} ${{ github.sha }} | grep "^etl-spark/") || true
+          if [ -n "$deleted_files" ]; then
+            for file in $deleted_files; do
+              filename=$(basename "$file")
+              echo "Removing File: $filename ..."
+              gsutil rm -r -f gs://data-pipeline-combustiveis-br-pyspark-code/$filename
+            done
+          else
+            echo "No files were deleted"
+          fi
 
   terraform:
     needs: changes
