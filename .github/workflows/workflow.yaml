@@ -43,21 +43,24 @@ jobs:
       # -----------------------------------------------------------------------------------------------------------
       # Example 1
       # -----------------------------------------------------------------------------------------------------------
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v44
+      - name: Get changed SPark Files
+        id: changed-spark-files
         # To compare changes between the current commit and the last pushed remote commit set `since_last_remote_commit: true`. e.g
         # with:
         #   since_last_remote_commit: true 
 
-      - name: List all changed files
+        uses: tj-actions/changed-files@v44
+        with:
+        # Avoid using single or double quotes for multiline patterns
+          files: |
+            etl-spark/**
+
+      - name: List all Spark Files
         env:
-          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+          ALL_CHANGED_FILES: ${{ steps.changed-spark-files.outputs.all_changed_files }}
         run: |
           for file in ${ALL_CHANGED_FILES}; do
-            if echo "$file" | grep -q "^etl-spark/"; then
-              echo "$file was changed"
-            fi
+            echo "$file was changed"
           done
 
       - name: List deleted files
@@ -70,24 +73,7 @@ jobs:
           else
             echo "No files were deleted"
           fi
-
-      - name: Get all changed markdown files
-        id: changed-markdown-files
-        uses: tj-actions/changed-files@v44
-        with:
-          # Avoid using single or double quotes for multiline patterns
-          files: |
-            etl-spark/**
-
-      - name: List all changed files markdown files
-        if: steps.changed-markdown-files.outputs.any_changed == 'true'
-        env:
-          ALL_CHANGED_FILES_2: ${{ steps.changed-markdown-files.outputs.all_changed_files }}
-        run: |
-          for file in ${ALL_CHANGED_FILES_2}; do
-            echo "$file was changed"
-          done
-          
+         
       - name: Authorize GCP
         uses: 'google-github-actions/auth@v2'
         with:
