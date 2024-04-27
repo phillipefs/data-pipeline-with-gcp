@@ -59,13 +59,17 @@ jobs:
               echo "$file was changed"
             fi
           done
-          
+
       - name: List deleted files
         run: |
-          deleted_files=$(git diff --diff-filter=D --name-only ${{ github.event.before }} ${{ github.sha }} | grep "^etl-spark/")
-          for file in $deleted_files; do
-            echo "$file was deleted"
-          done
+          deleted_files=$(git diff --diff-filter=D --name-only ${{ github.event.before }} ${{ github.sha }} | grep "^etl-spark/") || true
+          if [ -n "$deleted_files" ]; then
+            for file in $deleted_files; do
+              echo "$file was deleted"
+            done
+          else
+            echo "No files were deleted"
+          fi
 
       # - name: Checkout
       #   uses: actions/checkout@v2
