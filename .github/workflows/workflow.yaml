@@ -27,7 +27,7 @@ jobs:
       with:
         filters: |
           job_spark:
-            - 'etl-spark/main.py'
+            - 'etl-spark/**.py'
           infra:
             - '**.tf' 
 
