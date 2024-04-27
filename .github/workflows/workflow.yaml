@@ -6,7 +6,7 @@ on:
       - master
     paths:
       - '**.tf'
-      - 'etl-spark/main.py'
+      - 'etl-spark/**.py'
 
   pull_request:
     branches:
