@@ -15,7 +15,6 @@ on:
       - '**.tf'
 
 jobs:
-
   changes:
     runs-on: ubuntu-latest
     outputs:
