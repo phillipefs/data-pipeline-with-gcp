@@ -18,7 +18,7 @@ default_args = {
 CLUSTER_NAME = 'stack-data-pipeline'
 REGION = 'us-central1'
 PROJECT_ID = 'gcpdatapipeline-366601'
-CODE_BUCKET_NAME = 'data-pipeline-stack-combustiveis-brasil-pyspark-code'
+CODE_BUCKET_NAME = 'data-pipeline-combustiveis-br-pyspark-code'
 PYSPARK_FILE = 'main.py'
 
 with DAG(
@@ -40,7 +40,7 @@ with DAG(
         http_conn_id='stack-data-pipeline',
         endpoint='download_combustivel',
         data=json.dumps({
-            "bucket_name": "data-pipeline-stack-combustiveis-brasil-raw",
+            "bucket_name": "data-pipelines-combustiveis-br-raw",
             "url": "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/shpc/dsas/ca/ca-{{ dag_run.logical_date.strftime('%Y') }}-{{ '01' if dag_run.logical_date.month <= 6 else '02'}}.csv",
             "output_file_prefix": "combustiveis-brasil/{{ dag_run.logical_date.strftime('%Y') }}/{{ '01' if dag_run.logical_date.month <= 6 else '02'}}/ca-{{ dag_run.logical_date.strftime('%Y') }}-{{ '01' if dag_run.logical_date.month <= 6 else '02'}}.csv"
         }),
@@ -74,9 +74,9 @@ with DAG(
             "jar_file_uris": ["gs://spark-lib/bigquery/spark-bigquery-with-dependencies_2.12-0.23.2.jar"],
             "args": [
                 '--path_input',
-                "gs://data-pipeline-stack-combustiveis-brasil-raw/combustiveis-brasil/{{ dag_run.logical_date.strftime('%Y') }}/{{ '01' if dag_run.logical_date.month <= 6 else '02'}}/ca-{{ dag_run.logical_date.strftime('%Y') }}-{{ '01' if dag_run.logical_date.month <= 6 else '02'}}.csv",
+                "gs://data-pipelines-combustiveis-br-raw/combustiveis-brasil/{{ dag_run.logical_date.strftime('%Y') }}/{{ '01' if dag_run.logical_date.month <= 6 else '02'}}/ca-{{ dag_run.logical_date.strftime('%Y') }}-{{ '01' if dag_run.logical_date.month <= 6 else '02'}}.csv",
                 '--path_output',
-                "gs://data-pipeline-stack-combustiveis-brasil-curated/combustiveis-brasil/{{ dag_run.logical_date.strftime('%Y') }}/{{ '01' if dag_run.logical_date.month <= 6 else '02'}}/",
+                "gs://data-pipelines-combustiveis-br-curated/combustiveis-brasil/{{ dag_run.logical_date.strftime('%Y') }}/{{ '01' if dag_run.logical_date.month <= 6 else '02'}}/",
                 '--file_format', 'parquet',
                 '--bq_dataset', 'gasolina_brasil',
                 '--table_bq', 'tb_historico_combustivel_brasil'
