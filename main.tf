@@ -76,55 +76,55 @@ module "bucket-pyspark-code" {
   location   = var.region
 }
 
-# resource "google_dataproc_cluster" "sample_cluster" {
-#   provider = "google-beta"
-#   name    = "dataproc-cluster-lab"
-#   region  = var.region
-#   project = var.project_id
-#   graceful_decommission_timeout = "120s"
+resource "google_dataproc_cluster" "sample_cluster" {
+  provider = "google-beta"
+  name    = "dataproc-cluster-lab"
+  region  = var.region
+  project = var.project_id
+  graceful_decommission_timeout = "120s"
 
-#   cluster_config {
+  cluster_config {
 
-#     staging_bucket = "data-pipeline-combustiveis-br-pyspark-tmp"
+    staging_bucket = "data-pipeline-combustiveis-br-pyspark-tmp"
 
-#     gce_cluster_config {
-#           zone = "us-central1-c"
-#         }
+    gce_cluster_config {
+          zone = "us-central1-c"
+        }
 
-#     endpoint_config {
-#       enable_http_port_access = true
-#     }
+    endpoint_config {
+      enable_http_port_access = true
+    }
       
-#     master_config {
-#       num_instances = 1
-#       machine_type  = "n1-standard-2"
+    master_config {
+      num_instances = 1
+      machine_type  = "n1-standard-2"
 
-#       disk_config {
-#       boot_disk_type    = "pd-ssd"
-#       boot_disk_size_gb = 50
-#       num_local_ssds    = 1
-#       }
-#     }
+      disk_config {
+      boot_disk_type    = "pd-ssd"
+      boot_disk_size_gb = 50
+      num_local_ssds    = 1
+      }
+    }
 
-#     worker_config {
-#       num_instances = 2
-#       machine_type  = "n1-standard-2"
+    worker_config {
+      num_instances = 2
+      machine_type  = "n1-standard-2"
 
-#       disk_config {
-#       boot_disk_type    = "pd-ssd"
-#       boot_disk_size_gb = 50
-#       num_local_ssds    = 1
-#       }
-#     }
+      disk_config {
+      boot_disk_type    = "pd-ssd"
+      boot_disk_size_gb = 50
+      num_local_ssds    = 1
+      }
+    }
 
-#     software_config {
-#       # You can specify a list of optional components to be installed on the cluster.
-#       optional_components   = ["JUPYTER"]
-#       override_properties = {
-#           "spark:spark.executor.memory" = "2688m"
-#           "spark:spark.executor.cores" = "1"
-#           "spark:spark.logConf" = "true"
-#       }
-#     }
-#   }
-# }
+    software_config {
+      # You can specify a list of optional components to be installed on the cluster.
+      optional_components   = ["JUPYTER"]
+      override_properties = {
+          "spark:spark.executor.memory" = "2688m"
+          "spark:spark.executor.cores" = "1"
+          "spark:spark.logConf" = "true"
+      }
+    }
+  }
+}
