@@ -33,8 +33,8 @@ jobs:
 
   deploy_spark_files:
     needs: changes
+    if : ${{ needs.changes.outputs.job_spark == 'true' }} && github.event_name == 'push' && github.ref == 'refs/heads/master'
     name: 'Deploy Spark Files'
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && ${{ needs.changes.outputs.job_spark == 'true' }}
     runs-on: ubuntu-latest
 
     steps:
