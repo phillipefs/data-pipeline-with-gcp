@@ -6,8 +6,8 @@ from airflow.providers.google.cloud.operators.gcs import (
 )
 from airflow.utils.dates import days_ago
 
-PROJECT_ID = os.environ.get("GCP_PROJECT_ID", "gcpdatapipeline-366601")
-BUCKET_1 = os.environ.get("GCP_GCS_BUCKET_1", "data-pipeline-stack-combustiveis-brasil-curated")
+PROJECT_ID = os.environ.get("GCP_PROJECT_ID", "datapipelines-419810")
+BUCKET_1 = os.environ.get("GCP_GCS_BUCKET_1", "data-pipelines-combustiveis-br-curated")
 GCS_ACL_ENTITY = os.environ.get("GCS_ACL_ENTITY", "allUsers")
 GCS_ACL_BUCKET_ROLE = "OWNER"
 GCS_ACL_OBJECT_ROLE = "OWNER"
