@@ -17,7 +17,7 @@ default_args = {
 
 CLUSTER_NAME = 'stack-data-pipeline'
 REGION = 'us-central1'
-PROJECT_ID = 'gcpdatapipeline-366601'
+PROJECT_ID = 'datapipelines-419810'
 CODE_BUCKET_NAME = 'data-pipeline-combustiveis-br-pyspark-code'
 PYSPARK_FILE = 'main.py'
 
@@ -25,8 +25,9 @@ with DAG(
         dag_id="dag_combustivel",
         default_args=default_args,
         description="Dag de carga de dados dos combustíveis",
-        start_date=datetime(2004, 1, 1),
-        schedule_interval="0 0 1 */6 *",
+        start_date=datetime(2009, 1, 1),
+        schedule_interval=None,        
+        # schedule_interval="0 0 1 */6 *",
         tags=["combustivel"],
         max_active_runs=1
         # catchup=False
@@ -39,25 +40,33 @@ with DAG(
         method='POST',
         http_conn_id='stack-data-pipeline',
         endpoint='download_combustivel',
+        # data=json.dumps({
+        #     "bucket_name": "data-pipelines-combustiveis-br-raw",
+        #     "url": "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/shpc/dsas/ca/ca-{{ dag_run.logical_date.strftime('%Y') }}-{{ '01' if dag_run.logical_date.month <= 6 else '02'}}.csv",
+        #     "output_file_prefix": "combustiveis-brasil/{{ dag_run.logical_date.strftime('%Y') }}/{{ '01' if dag_run.logical_date.month <= 6 else '02'}}/ca-{{ dag_run.logical_date.strftime('%Y') }}-{{ '01' if dag_run.logical_date.month <= 6 else '02'}}.csv"
+        # }),
         data=json.dumps({
             "bucket_name": "data-pipelines-combustiveis-br-raw",
-            "url": "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/shpc/dsas/ca/ca-{{ dag_run.logical_date.strftime('%Y') }}-{{ '01' if dag_run.logical_date.month <= 6 else '02'}}.csv",
-            "output_file_prefix": "combustiveis-brasil/{{ dag_run.logical_date.strftime('%Y') }}/{{ '01' if dag_run.logical_date.month <= 6 else '02'}}/ca-{{ dag_run.logical_date.strftime('%Y') }}-{{ '01' if dag_run.logical_date.month <= 6 else '02'}}.csv"
+            "url": "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/shpc/dsas/ca/ca-2009-01.csv",
+            "output_file_prefix": "combustiveis-brasil/2009/01/ca-2009-01.csv"
         }),
         headers={"Content-Type": "application/json"})
 
     CLUSTER_CONFIG = {
-        "master_config": {
-            "num_instances": 1,
-            "machine_type_uri": "n1-standard-2",
-            "disk_config": {"boot_disk_type": "pd-standard", "boot_disk_size_gb": 50},
-        },
-        "worker_config": {
-            "num_instances": 2,
-            "machine_type_uri": "n1-standard-2",
-            "disk_config": {"boot_disk_type": "pd-standard", "boot_disk_size_gb": 50},
-        },
-    }
+            "gce_cluster_config" : {
+                "zone_uri": "us-central1-c"
+            },
+            "master_config": {
+                "num_instances": 1,
+                "machine_type_uri": "n1-standard-2",
+                "disk_config": {"boot_disk_type": "pd-standard", "boot_disk_size_gb": 50},
+            },
+            "worker_config": {
+                "num_instances": 2,
+                "machine_type_uri": "n1-standard-2",
+                "disk_config": {"boot_disk_type": "pd-standard", "boot_disk_size_gb": 50},
+            },
+        }
 
     create_cluster = DataprocCreateClusterOperator(
         task_id="create_cluster",
