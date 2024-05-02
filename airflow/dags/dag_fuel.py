@@ -22,21 +22,21 @@ CODE_BUCKET_NAME = 'data-pipeline-combustiveis-br-pyspark-code'
 PYSPARK_FILE = 'main.py'
 
 with DAG(
-        dag_id="dag_combustivel",
+        dag_id="dag_fuel_load",
         default_args=default_args,
-        description="Dag de carga de dados dos combustíveis",
+        description="Fuel data load dag",
         start_date=datetime(2009, 1, 1),
         schedule_interval=None,        
         # schedule_interval="0 0 1 */6 *",
-        tags=["combustivel"],
+        tags=["FUEL"],
         max_active_runs=1
         # catchup=False
 ) as dag:
 
-    start_dag = DummyOperator(task_id="start_dag")
+    start_dag = DummyOperator(task_id="start_process")
 
     get_data = SimpleHttpOperator(
-        task_id='get_op',
+        task_id='get_file_to_bucket',
         method='POST',
         http_conn_id='stack-data-pipeline',
         endpoint='download_combustivel',
@@ -69,7 +69,7 @@ with DAG(
         }
 
     create_cluster = DataprocCreateClusterOperator(
-        task_id="create_cluster",
+        task_id="create_dataproc_cluster",
         project_id=PROJECT_ID,
         cluster_config=CLUSTER_CONFIG,
         region=REGION,
@@ -83,9 +83,9 @@ with DAG(
             "jar_file_uris": ["gs://spark-lib/bigquery/spark-bigquery-with-dependencies_2.12-0.23.2.jar"],
             "args": [
                 '--path_input',
-                "gs://data-pipelines-combustiveis-br-raw/combustiveis-brasil/{{ dag_run.logical_date.strftime('%Y') }}/{{ '01' if dag_run.logical_date.month <= 6 else '02'}}/ca-{{ dag_run.logical_date.strftime('%Y') }}-{{ '01' if dag_run.logical_date.month <= 6 else '02'}}.csv",
+                "gs://data-pipelines-combustiveis-br-raw/combustiveis-brasil/2009/01/ca-2009-01.csv",
                 '--path_output',
-                "gs://data-pipelines-combustiveis-br-curated/combustiveis-brasil/{{ dag_run.logical_date.strftime('%Y') }}/{{ '01' if dag_run.logical_date.month <= 6 else '02'}}/",
+                "gs://data-pipelines-combustiveis-br-curated/combustiveis-brasil/2009/01/",
                 '--file_format', 'parquet',
                 '--bq_dataset', 'gasolina_brasil',
                 '--table_bq', 'tb_historico_combustivel_brasil'
@@ -93,19 +93,19 @@ with DAG(
     }
 
     submit_job = DataprocSubmitJobOperator(
-        task_id="pyspark_task",
+        task_id="spark_submit",
         job=PYSPARK_JOB,
         region=REGION,
         project_id=PROJECT_ID)
 
     delete_cluster = DataprocDeleteClusterOperator(
-        task_id="delete_cluster",
+        task_id="delete_dataproc_cluster",
         project_id=PROJECT_ID,
         cluster_name=CLUSTER_NAME,
         region=REGION,
     )
 
-    fim_dag = DummyOperator(task_id="fim_dag")
+    fim_dag = DummyOperator(task_id="end_process")
 
     start_dag >> get_data >> create_cluster >> submit_job >> delete_cluster >> fim_dag
 
